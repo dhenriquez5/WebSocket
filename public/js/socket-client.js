@@ -1,40 +1,47 @@
-console.log("hola mundo");
+
+// Referencias del HTML
+const lblOnline  = document.querySelector('#lblOnline');
+const lblOffline = document.querySelector('#lblOffline');
+const txtMensaje = document.querySelector('#txtMensaje');
+const btnEnviar  = document.querySelector('#btnEnviar');
+
 
 const socket = io();
 
-const online= document.getElementById('online');
-const offline= document.getElementById('offline');
-const btnEnviar= document.getElementById('btnEnviar');
-const textMensaje= document.getElementById('textMensaje');
 
 
+socket.on('connect', () => {
+    // console.log('Conectado');
 
-socket.on('connect',() => {
-    offline.style.display='none';
-    online.style.display='';
+    lblOffline.style.display = 'none';
+    lblOnline.style.display  = '';
+
+});
+
+socket.on('disconnect', () => {
+    // console.log('Desconectado del servidor');
+
+    lblOnline.style.display  = 'none';
+    lblOffline.style.display = '';
+});
+
+
+socket.on('enviar-mensaje', (payload) => {
+    console.log( payload )
 })
 
-socket.on('disconnect',() => {
-    offline.style.display='';
-    online.style.display='none';
-})
 
-socket.on('enviar-mensaje',(payload) => {
-    //ESCUHCA
-    console.log(payload)
-})
+btnEnviar.addEventListener( 'click', () => {
 
-btnEnviar.addEventListener('click',() => {
-    const mensaje = textMensaje.value;
-
+    const mensaje = txtMensaje.value;
     const payload = {
         mensaje,
-        id:1123,
-        fecha:new Date()
+        id: '123ABC',
+        fecha: new Date().getTime()
     }
-
-    socket.emit('enviar-mensaje',payload,(id)=>{
-        ///EMITE
-        console.log("desde el server:" + id)
+    
+    socket.emit( 'enviar-mensaje', payload, ( id ) => {
+        console.log('Desde el server', id );
     });
-})
+
+});
